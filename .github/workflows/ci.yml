@@ -1,0 +1,52 @@
+# CI workflow:
+# Installs Qt on Windows, configures the CMake project, and runs the full CTest suite.
+
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  windows-qt:
+    runs-on: windows-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Qt with aqt
+        shell: powershell
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install aqtinstall
+          python -m aqt install-qt windows desktop 6.11.0 win64_msvc2022_64 --outputdir C:\Qt
+
+      - name: Configure
+        shell: powershell
+        run: |
+          cmake -S . -B build `
+            -G "Visual Studio 17 2022" `
+            -A x64 `
+            -DBUILD_TESTING=ON `
+            -DCMAKE_PREFIX_PATH=C:\Qt\6.11.0\msvc2022_64
+
+      - name: Build
+        shell: powershell
+        run: cmake --build build --config Debug
+
+      - name: Test
+        shell: powershell
+        run: ctest --test-dir build -C Debug --output-on-failure

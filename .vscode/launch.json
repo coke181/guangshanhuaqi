@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Qt：调试软光栅化器（Debug）",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "preLaunchTask": "Qt：构建（调试预设）",
+      "program": "${workspaceFolder}/build/presets/qt-msvc2022-debug/Debug/software_rasterizer.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}/build/presets/qt-msvc2022-debug/Debug",
+      "environment": [
+        {
+          "name": "PATH",
+          "value": "${env:QTDIR}\\bin;${env:PATH}"
+        }
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}
