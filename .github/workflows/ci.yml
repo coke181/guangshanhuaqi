@@ -16,6 +16,7 @@ jobs:
     timeout-minutes: 45
     env:
       QT_VERSION: 6.10.0
+      QT_ROOT: ${{ github.workspace }}\Qt
 
     steps:
       - name: Checkout
@@ -36,12 +37,13 @@ jobs:
           host: windows
           target: desktop
           arch: win64_msvc2022_64
+          dir: ${{ env.QT_ROOT }}
           cache: true
 
       - name: Configure
         shell: powershell
         run: |
-          $qtPrefix = (Resolve-Path (Join-Path $env:Qt6_DIR "..\\..")).Path
+          $qtPrefix = Join-Path $env:QT_ROOT "${env:QT_VERSION}\msvc2022_64"
           cmake -S . -B build -G "Visual Studio 17 2022" -A x64 -DBUILD_TESTING=ON "-DCMAKE_PREFIX_PATH=$qtPrefix"
 
       - name: Build
